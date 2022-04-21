@@ -2,6 +2,9 @@ import json
 from multiprocessing import shared_memory
 import re
 import urllib.request
+import requests
+from lxml import etree
+
 
 #获取用户的uuid号(UserId)
 def getUUID():
@@ -19,16 +22,35 @@ def getUserBasicInfo(UserId):
     return user
 
 #获取全部视频的BV号  #todo
-def getAllBvid(args):
-    pass
+#https://space.bilibili.com/18154819/video?tid=0&page=1&keyword=&order=pubdate
+def getAllBvid(UserId):
+    
+    Bv_List=[]
+    #先测试第一页
+    page = 1
+    userUrl="https://space.bilibili.com/"+UserId+"video?tid=0&page="+page+"&keyword=&order=pubdate"
+    html_text=requests.get(userUrl).text
+    tree=etree.HTML(html_text)
+    #获取全部页数 #fix me
+    tmp = tree.xpath('//*[@id="submit-video-list"]/ul[3]/span[1]')
+    allPages=int(tmp[1:-1])
+    #获取link     #fix me
+    
+    linkList=tree.xpath('//*[@id="submit-video-list"]/ul[1]/li/a')  
+    for item in linkList:
+        Bv_List.append(item)
+        
+
+        
+    
+
 
 #获取单个bvid
 #BV1134y167cP   
 def getBvid():
     bvidAPI = input("请粘贴Bilibili视频的网址（web端）\n ")
     bvidNum=re.findall(r"[^/]+(?!.*/)",bvidAPI)
-    bvid=str(bvidNum[0]).split("?")[0]
-    return bvid 
+    return bvidNum 
 
 #获取单个视频的状态数
 def getVideoInfo(bvid):
@@ -42,4 +64,3 @@ def getVideoInfo(bvid):
     shareNum=videoJson['data']['share']
     likeNum=videoJson['data']['like']
     videoInfo={"播放量：":viewNum ,"弹幕数:":+danmakuNum,"评论数：":replyNum,"收藏：":favoriteNum, "投币：":coinNum, "分享：":shareNum, "获赞：" :likeNum}
-#
