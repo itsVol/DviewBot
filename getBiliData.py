@@ -22,7 +22,6 @@ def getUserBasicInfo(UserId):
     return user
 
 #获取全部视频的BV号  #todo
-#https://space.bilibili.com/18154819/video?tid=0&page=1&keyword=&order=pubdate
 def getAllBvid(UserId):
     
     Bv_List=[]
@@ -35,7 +34,7 @@ def getAllBvid(UserId):
     tmp = tree.xpath('//*[@id="submit-video-list"]/ul[3]/span[1]')
     allPages=int(tmp[1:-1])
     #获取link     #fix me
-    
+
     linkList=tree.xpath('//*[@id="submit-video-list"]/ul[1]/li/a')  
     for item in linkList:
         Bv_List.append(item)
