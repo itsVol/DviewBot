@@ -23,21 +23,26 @@ def getUserBasicInfo(UserId):
 
 #获取全部视频的BV号  #todo
 def getAllBvid(UserId):
-    
+
+    headers = {
+    'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36'
+    }
     Bv_List=[]
     #先测试第一页
     page = 1
-    userUrl="https://space.bilibili.com/"+UserId+"video?tid=0&page="+page+"&keyword=&order=pubdate"
-    html_text=requests.get(userUrl).text
+    userUrl="https://space.bilibili.com/"+str(UserId)+"/video"
+    print(userUrl)
+    html_text=requests.get(userUrl,headers=headers).text
     tree=etree.HTML(html_text)
     #获取全部页数 #fix me
     tmp = tree.xpath('//*[@id="submit-video-list"]/ul[3]/span[1]')
-    allPages=int(tmp[1:-1])
+    print(tmp)
     #获取link     #fix me
 
-    linkList=tree.xpath('//*[@id="submit-video-list"]/ul[1]/li/a')  
+    linkList=tree.xpath('//*[@id="submit-video-list"]/ul[2]/li/a/@href')  
     for item in linkList:
         Bv_List.append(item)
+    return Bv_List
         
 
         
